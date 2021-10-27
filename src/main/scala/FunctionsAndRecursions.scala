@@ -80,4 +80,21 @@ object FunctionsAndRecursions extends App {
 
   println(isPrime2(2003))
 
+  // Default Arguments - can be given to the function but either they all should be default or the trailing ones only.
+  // Leading default and trailing not default - compiler gets confused while sending the params.
+  // In such case, pass the params with name. Also, when passing the params, sequence of params don't matter.
+
+  @tailrec
+  def tailRecFactorialDefaultArg(n: Int, accumulator: Int = 1): Int = {
+    if (n <= 1) accumulator
+    else tailRecFactorialDefaultArg(n-1, n * accumulator)
+  }
+
+  println("-------------------------")
+  println("Factorial: "+tailRecFactorialDefaultArg(5))  // if "n" had a default value and "accumulator" hadn't then this type of call would show an error.
+  println("Factorial: "+tailRecFactorialDefaultArg(6, 1))
+  println("Factorial: "+tailRecFactorialDefaultArg(accumulator = 1, n = 7))
+
+
+
 }
