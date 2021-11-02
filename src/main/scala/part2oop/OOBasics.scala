@@ -12,7 +12,7 @@ object OOBasics extends App {
 
   val person = new Person("Lewis", 24)
   println(person.x)
-  // name and age are the Class Params, not the fields hence they cannot be accessed outside the class.
+  // name and age are the Class PARAMS, not the FIELDS hence they cannot be accessed outside the class.
   // In order to do so, put "val" before that.
   println(person.age)
   person.greeting("Max")
