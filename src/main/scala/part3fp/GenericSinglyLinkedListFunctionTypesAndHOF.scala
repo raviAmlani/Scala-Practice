@@ -1,9 +1,7 @@
 package com.ravi.scalapractice
-package part2oop
+package part3fp
 
-import java.util
 import java.util.NoSuchElementException
-import scala.runtime.Nothing$
 
   // Abstract class vs. Traits (similar to Interfaces in Java)
   // They both can contains Abstract as well as non-abstract members.
@@ -17,9 +15,9 @@ import scala.runtime.Nothing$
   // Scala.Nothing inherit from Scala.AnyVal and Scala.Null, so it can replace basically anything.
 
 /**
- * This class implements the Case, and Traits for implementing the functions like filter, transform and flatMap.
+ * This class implements the Function-Types and High Order Functions.
  *
- * Either comment this class or GenericSinglyLinkedList* in order to run any of them.
+ * Either comment this class or GenericSinglyLinkedListExtended in order to run any of them.
  * They both share the same class names.
  */
 
@@ -32,9 +30,9 @@ abstract class MyGenericList[+A] {
     def printElements(): String
     override def toString: String = "["+ printElements +"]"
 
-    def filter(myPredicate: MyPredicate[A]): MyGenericList[A]
-    def map[B](transformer: MyTransformer[A, B]): MyGenericList[B]
-    def flapMap[B](transformer: MyTransformer[A, MyGenericList[B]]): MyGenericList[B]
+    def map[B](transformer: A => B): MyGenericList[B]
+    def flapMap[B](transformer: A => MyGenericList[B]): MyGenericList[B]
+    def filter(myPredicate: A => Boolean): MyGenericList[A]
 
     def ++[B >: A](list: MyGenericList[B]): MyGenericList[B]
 
@@ -49,11 +47,11 @@ abstract class MyGenericList[+A] {
 
     override def printElements(): String = ""
 
-    def filter(myPredicate: MyPredicate[Nothing]): MyGenericList[Nothing] = EmptyGenericList
-    def map[B](transformer: MyTransformer[Nothing, B]): MyGenericList[B] = EmptyGenericList
+    def filter(myPredicate: Nothing => Boolean): MyGenericList[Nothing] = EmptyGenericList
+    def map[B](transformer: Nothing => B): MyGenericList[B] = EmptyGenericList
 
     def ++[B >: Nothing](myList: MyGenericList[B]): MyGenericList[B] = myList
-    def flapMap[B](transformer: MyTransformer[Nothing, MyGenericList[B]]): MyGenericList[B] = EmptyGenericList
+    def flapMap[B](transformer: Nothing => MyGenericList[B]): MyGenericList[B] = EmptyGenericList
 
   }
 
@@ -69,30 +67,31 @@ abstract class MyGenericList[+A] {
       else head  + " " + tail.printElements()
     }
 
-    def filter(myPredicate: MyPredicate[A]): MyGenericList[A] = {
-      if (myPredicate.test(head)) new ConsGeneric(head, tail.filter(myPredicate))
+    def filter(myPredicate: A => Boolean): MyGenericList[A] = {
+      if (myPredicate(head)) new ConsGeneric(head, tail.filter(myPredicate))
       else tail.filter(myPredicate)
     }
-    def map[B](transformer: MyTransformer[A, B]): MyGenericList[B] = {
-      new ConsGeneric(transformer.transform(head), tail.map(transformer))
+    def map[B](transformer: A => B): MyGenericList[B] = {
+      new ConsGeneric(transformer(head), tail.map(transformer))
     }
 
     def ++[B >: A](myList: MyGenericList[B]): MyGenericList[B] = {
       new ConsGeneric[B](head, tail ++ myList)
     }
-    def flapMap[B](transformer: MyTransformer[A, MyGenericList[B]]): MyGenericList[B] = {
-      transformer.transform(head) ++ tail.flapMap(transformer)
+    def flapMap[B](transformer: A => MyGenericList[B]): MyGenericList[B] = {
+      transformer (head) ++ tail.flapMap(transformer)
     }
 
   }
 
-  trait MyPredicate[-T] {
+  // Replacing below Traits with Function-Types.
+  /*trait MyPredicate[-T] {
     def test(element: T): Boolean
   }
 
   trait MyTransformer[-A, B] {
     def transform(element: A): B
-  }
+  }*/
 
   object GenericListTest extends App {
     val singlyLinkedList1: MyGenericList[Int] = new ConsGeneric(1, EmptyGenericList)
@@ -119,18 +118,18 @@ abstract class MyGenericList[+A] {
     println(singlyLinkedList2.toString)
 
     println("----------------")
-    println(singlyLinkedList12.map(new MyTransformer[Int, Int] {
-      override def transform(element: Int): Int = element * 2
+    println(singlyLinkedList12.map(new Function1[Int, Int] {
+      override def apply(element: Int): Int = element * 2
     }).toString)
 
-    println(singlyLinkedList13.filter(new MyPredicate[Int] {
-      override def test(element: Int): Boolean = element % 3 == 0
+    println(singlyLinkedList13.filter(new Function1[Int, Boolean] {
+      override def apply(element: Int): Boolean = element % 3 == 0
     }).toString)
 
     println("----------------")
     println(singlyLinkedList12 ++ singlyLinkedList13)
-    println(singlyLinkedList13.flapMap(new MyTransformer[Int, MyGenericList[Int]] {
-      override def transform(element: Int): MyGenericList[Int] = new ConsGeneric(element, new ConsGeneric(element+1, EmptyGenericList))
+    println(singlyLinkedList13.flapMap(new Function1[Int, MyGenericList[Int]] {
+      override def apply(element: Int): MyGenericList[Int] = new ConsGeneric(element, new ConsGeneric(element+1, EmptyGenericList))
     }).toString)
 
   }

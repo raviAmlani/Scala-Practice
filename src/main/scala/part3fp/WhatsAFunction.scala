@@ -23,4 +23,16 @@ object WhatsAFunction extends App {
     override def apply(v1: String, v2: String): String = v1 + " " + v2
   }
 
+  val masterAdder: Function1[Int, Function1[Int, Int]] = new Function1[Int, Function1[Int, Int]] {
+    override def apply(v1: Int): Function1[Int, Int] = new Function1[Int, Int]{
+      override def apply(v2: Int): Int = {
+        v1 + v2
+      }
+    }
+  }
+
+  val adder = masterAdder(3)
+  println(adder(3))
+  println(masterAdder(5)(6))  // Curried Function
+
 }

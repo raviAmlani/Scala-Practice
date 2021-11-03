@@ -15,6 +15,13 @@ import java.util.NoSuchElementException
   // All the Premitive types inherit from a type called AnyVal (rarely used)
   // Scala.Nothing inherit from Scala.AnyVal and Scala.Null, so it can replace basically anything.
 
+/**
+ * This class implements the Generics.
+ *
+ * Either comment this class or other GenericSinglyLinkedList* in order to run any of them.
+ * They both share the same class names.
+ */
+
   abstract class MyGenericList[+A] {
     def head: A
     def tail: MyGenericList[A]
