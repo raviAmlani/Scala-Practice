@@ -1,7 +1,7 @@
 package com.ravi.scalapractice
 package part3fp
 
-object WhatsAFunction extends App {
+object FunctionTypeAndCurriedFunction extends App {
 
   // If Interface or Abstract class has only one method, in Scala it is normal to name it apply() so that
   // when we create an anonymous class/method body it can be directly called.
