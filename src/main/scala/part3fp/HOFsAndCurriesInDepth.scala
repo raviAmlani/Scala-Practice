@@ -42,5 +42,33 @@ object HOFsAndCurriesInDepth extends App {
   println(helper1(Math.PI))
   println(helper2(Math.PI))
 
+  // CURRIED FUNCTIONS - TAKING ANOTHER FUNCTION AS A PARAMETER
+  def curryTakingAnotherFunction(f: (Int, Int) => Int): Int => Int => Int = {
+    x => y => f(x, y)
+  }
+  println(curryTakingAnotherFunction(_ + _)(9)(10))
+
+  // FUNCTION - TAKING CURRIED FUNCTION AS A PARAMETER
+  def functionTakingCurry(f: (Int => Int => Int)): (Int, Int) => Int = {
+    (x, y) => f(x)(y)
+  }
+  println(functionTakingCurry(curryTakingAnotherFunction(_ + _))(3, 7))
+
+  // COMPOSE FUNCTION
+  def compose[A, B, T](f: A => B, g: T => A): T => B =
+    x => f(g(x))
+  // AND-THEN FUNCTION
+  def andThen[A, B, T](f: A => B, g: B => T): A => T =
+    x => g(f(x))
+
+  def plus2 = (x: Int) => x + 2
+  def times3: Int => Int = x => x * 3
+
+  val composed = compose(plus2, times3)
+  val ordered = andThen(plus2, times3)
+
+  println(composed(2))
+  println(ordered(2))
+
 
 }
